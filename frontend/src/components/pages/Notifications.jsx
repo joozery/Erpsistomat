@@ -1,33 +1,79 @@
 import React from "react";
+import {
+  FaCheckCircle,
+  FaExclamationTriangle,
+  FaTimesCircle,
+  FaInfoCircle,
+} from "react-icons/fa";
+
+const getIcon = (type) => {
+  const size = "text-xl";
+  switch (type) {
+    case "success":
+      return <FaCheckCircle className={`text-green-500 ${size}`} />;
+    case "warning":
+      return <FaExclamationTriangle className={`text-yellow-500 ${size}`} />;
+    case "error":
+      return <FaTimesCircle className={`text-red-500 ${size}`} />;
+    case "info":
+    default:
+      return <FaInfoCircle className={`text-blue-500 ${size}`} />;
+  }
+};
+
+const mockNotifications = [
+  {
+    id: 1,
+    type: "success",
+    title: "อัปโหลดไฟล์สำเร็จ",
+    description: "คุณได้อัปโหลดเอกสารไปยังระบบแล้ว",
+    time: "5 นาทีที่แล้ว",
+  },
+  {
+    id: 2,
+    type: "warning",
+    title: "ระบบจะปิดปรับปรุงคืนนี้",
+    description: "เริ่มตั้งแต่เวลา 00:00 - 02:00",
+    time: "30 นาทีที่แล้ว",
+  },
+  {
+    id: 3,
+    type: "error",
+    title: "ล้มเหลวในการบันทึกข้อมูล",
+    description: "กรุณาตรวจสอบการเชื่อมต่อเครือข่าย",
+    time: "1 ชั่วโมงที่แล้ว",
+  },
+  {
+    id: 4,
+    type: "info",
+    title: "มีเวอร์ชันใหม่ของระบบ",
+    description: "กรุณารีเฟรชหน้าเว็บเพื่อใช้งาน",
+    time: "เมื่อวานนี้",
+  },
+];
 
 const Notifications = () => {
-  const notifications = [
-    { id: 1, message: "New user registered", time: "5 mins ago" },
-    { id: 2, message: "Payment received from John Doe", time: "30 mins ago" },
-    { id: 3, message: "System update available", time: "1 hour ago" },
-  ];
-
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold">Notifications</h1>
-      <p className="text-gray-600 mt-2">Recent system notifications.</p>
+    <div className="p-6 font-['Prompt'] bg-gray-50 min-h-screen">
+      <h1 className="text-2xl font-bold mb-6">การแจ้งเตือน</h1>
 
-      <div className="mt-6 bg-white shadow-md rounded p-4">
-        {notifications.length > 0 ? (
-          <ul className="divide-y divide-gray-200">
-            {notifications.map((notif) => (
-              <li key={notif.id} className="p-3">
-                <p className="text-gray-800">{notif.message}</p>
-                <span className="text-gray-500 text-sm">{notif.time}</span>
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <p className="text-gray-500">No notifications available.</p>
-        )}
+      <div className="space-y-4">
+        {mockNotifications.map((note) => (
+          <div
+            key={note.id}
+            className="flex items-start bg-white p-4 rounded-lg shadow-sm border border-gray-200"
+          >
+            <div className="mr-4 mt-1">{getIcon(note.type)}</div>
+            <div className="flex-1">
+              <h2 className="text-base font-semibold">{note.title}</h2>
+              <p className="text-sm text-gray-600">{note.description}</p>
+              <p className="text-xs text-gray-400 mt-1">{note.time}</p>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
 };
 
-export default Notifications; // ✅ ต้องมี export default
+export default Notifications;

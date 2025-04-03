@@ -7,7 +7,7 @@ const Dashboard = () => {
   console.log("✅ Dashboard Component Loaded"); // 🔹 Debug เช็คว่ามาไหม
 
   return (
-    <div className="flex h-screen bg-gray-100">
+    <div className="flex h-screen bg-gray-50">
       {/* ✅ Sidebar */}
       <div className="w-64 bg-white border-r shadow-md">
         <Sidebar />

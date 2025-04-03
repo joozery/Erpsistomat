@@ -8,6 +8,7 @@ import ProcessQRCode from "./components/pages/ProcessQRCode";
 import ProcessDetails from "./components/pages/ProcessDetails"; 
 import MonthlySummary from "./components/pages/MonthlySummary";
 import Login from "./components/pages/Login"; 
+import AllPlans from "./components/pages/AllPlans";
 
 // ✅ เช็คว่าผู้ใช้ล็อกอินหรือยัง
 const ProtectedRoute = ({ children }) => {
@@ -31,6 +32,7 @@ function App() {
           <Route path="process-qrcode" element={<ProcessQRCode />} />
           <Route path="monthly-summary" element={<MonthlySummary />} />
           <Route path="process-details/:id" element={<ProcessDetails />} /> 
+          <Route path="/dashboard/all-plans" element={<AllPlans />} />
         </Route>
 
         {/* ✅ Default Route ไปที่ Login ก่อน */}

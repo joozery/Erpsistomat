@@ -56,7 +56,7 @@ const ProcessQRCode = () => {
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   return (
-    <div className="p-6 bg-gray-100 flex-1 overflow-auto font-['Prompt']">
+    <div className="p-6 bg-gray-50 flex-1 overflow-auto font-['Prompt']">
       {/* ✅ Header */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold">Process QR Code</h2>

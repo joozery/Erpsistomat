@@ -7,6 +7,7 @@ import UserManagement from "../pages/UserManagement";
 import Notifications from "../pages/Notifications";
 import MonthlySummary from "../pages/MonthlySummary";
 import ProcessDetails from "../pages/ProcessDetails"; // ✅ Import ProcessDetails
+import AllPlans from "../pages/AllPlans"; // ✅ Import หน้าแพลนงานทั้งหมด
 
 const MainContent = () => {
   const location = useLocation();
@@ -24,6 +25,7 @@ const MainContent = () => {
         {currentPath === "/dashboard/user-management" && <UserManagement />}
         {currentPath === "/dashboard/notifications" && <Notifications />}
         {currentPath === "/dashboard/monthly-summary" && <MonthlySummary />}
+        {currentPath === "/dashboard/all-plans" && <AllPlans />}
 
         {/* ✅ รองรับ path `/dashboard/process-details/:id` */}
         {currentPath.startsWith("/dashboard/process-details/") && id && (

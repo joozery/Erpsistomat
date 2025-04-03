@@ -1,30 +1,36 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaSave, FaClock, FaUser } from "react-icons/fa";
-import QRCode from "react-qr-code"; // ✅ ใช้ react-qr-code
+import { FaArrowLeft, FaSave } from "react-icons/fa";
+import Barcode from "react-barcode";
 
 // ✅ ตัวเลือก Dropdown กระบวนการ
-const processOptions = ["MATERAIL", "QC", "CAM1", "CNC1", "ML", "QC FN", "เสร็จงาน","CNC SPAR","CAM 1","CAM 2","CNC 1","CNC 2"];
+const processOptions = [
+  "MATERAIL", "QC", "CAM1", "CNC1", "ML", "QC FN", "เสร็จงาน",
+  "CNC SPAR", "CAM 1", "CAM 2", "CNC 1", "CNC 2"
+];
 
-// ✅ Mockup Data
-const initialProcessList = Array(10).fill().map((_, index) => ({
-  id: index + 1,
-  process: "MATERAIL",
-  target_time: "00:30",
-  start_time: "",
-  stop_time: "",
-  worker_id: "",
-  elapsed_time: "00:00",
-  remark: "-"
-}));
+// ✅ เริ่มด้วย 2 แถว
+const initialProcessList = [
+  {
+    id: 1, process: "MATERAIL", target_time: "00:30", start_time: "",
+    stop_time: "", worker_id: "", elapsed_time: "00:00", remark: "-"
+  },
+  {
+    id: 2, process: "CAM1", target_time: "00:30", start_time: "",
+    stop_time: "", worker_id: "", elapsed_time: "00:00", remark: "-"
+  }
+];
 
 const ProcessDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [processList, setProcessList] = useState(initialProcessList);
-  const [jobDetails, setJobDetails] = useState({ received_date: "2025-03-18", due_date: "2025-03-25" });
+  const [jobDetails, setJobDetails] = useState({
+    received_date: "12/03/2568",
+    due_date: "20/03/2568"
+  });
 
-  // ✅ อัปเดตเวลาแบบเรียลไทม์เมื่อกระบวนการกำลังทำงาน
+  // ✅ Real-time elapsed time update
   useEffect(() => {
     const interval = setInterval(() => {
       setProcessList((prevList) =>
@@ -46,33 +52,46 @@ const ProcessDetails = () => {
         })
       );
     }, 1000);
-
     return () => clearInterval(interval);
   }, []);
 
-  // ✅ ฟังก์ชันเปลี่ยนค่าของ Dropdown (กระบวนการ)
+  // ✅ Dropdown/Field Handlers
   const handleProcessChange = (index, newValue) => {
     const updatedList = [...processList];
     updatedList[index].process = newValue;
     setProcessList(updatedList);
   };
 
-  // ✅ ฟังก์ชันเปลี่ยนค่าของ `input`
   const handleInputChange = (index, field, value) => {
     const updatedList = [...processList];
     updatedList[index][field] = value;
     setProcessList(updatedList);
   };
 
-  // ✅ บันทึกข้อมูล
   const handleSave = () => {
     alert("✅ บันทึกข้อมูลสำเร็จ!");
-    console.log("🔹 ข้อมูลที่บันทึก:", processList);
+    console.log("📦 บันทึก:", processList);
+  };
+
+  const handleAddProcess = () => {
+    setProcessList((prev) => [
+      ...prev,
+      {
+        id: prev.length + 1,
+        process: "MATERAIL",
+        target_time: "00:30",
+        start_time: "",
+        stop_time: "",
+        worker_id: "",
+        elapsed_time: "00:00",
+        remark: "-"
+      },
+    ]);
   };
 
   return (
-    <div className="p-6 bg-gray-100 flex-1 overflow-auto font-['Prompt']">
-      {/* ✅ ปุ่มย้อนกลับ */}
+    <div className="p-6 bg-gray-50 flex-1 overflow-auto font-['Prompt']">
+      {/* 🔙 Back Button */}
       <button
         onClick={() => navigate(-1)}
         className="flex items-center px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400 mb-4"
@@ -81,57 +100,116 @@ const ProcessDetails = () => {
         ย้อนกลับ
       </button>
 
-      {/* ✅ ข้อมูล JOB */}
-      <div className="bg-yellow-300 p-6 rounded-md mb-6 shadow-md text-center">
-        <h2 className="text-2xl font-bold text-gray-800">กระบวนการผลิต</h2>
-        <div className="flex justify-between mt-3 text-lg font-semibold text-gray-700">
-          <span>📌 JOB: {id}</span>
-          <span>📅 วันที่รับงาน: {jobDetails.received_date}</span>
-          <span>⏳ กำหนดส่ง: {jobDetails.due_date}</span>
+      {/* 🔳 Header with Barcode */}
+      <div className="bg-white rounded-md shadow p-6 mb-6">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-4">
+          <div>
+            <h2 className="text-lg font-semibold">Job {id}</h2>
+            <p className="text-sm text-gray-500">JD-{id}</p>
+          </div>
+          <div className="flex flex-col items-center">
+  <Barcode value={id} width={1.5} height={50} fontSize={12} />
+  <p className="text-xs mt-1">{id}</p>
+</div>
+          <div className="text-right space-y-1 mt-4 md:mt-0">
+            <p className="text-sm"><span className="font-semibold">วันรับงาน:</span> {jobDetails.received_date}</p>
+            <p className="text-sm"><span className="font-semibold">กำหนดส่ง:</span> {jobDetails.due_date}</p>
+          </div>
         </div>
       </div>
 
-      {/* ✅ ตารางข้อมูล */}
-      <div className="bg-white shadow-lg rounded-lg p-6">
-        <table className="w-full text-left border-collapse">
+      {/* 🧾 Process Table */}
+      <div className="bg-white rounded-md shadow-md overflow-auto">
+        <div className="flex justify-between items-center p-4">
+          <h3 className="text-lg font-bold">กระบวนการผลิต</h3>
+          <button
+            onClick={handleAddProcess}
+            className="bg-black text-white px-4 py-2 rounded hover:opacity-90"
+          >
+            เพิ่มกระบวนการ
+          </button>
+        </div>
+
+        <table className="w-full text-sm border-t">
           <thead>
-            <tr className="bg-gray-300 border-b text-gray-700">
-              <th className="p-3">ลำดับที่</th>
+            <tr className="bg-black text-white text-center">
+              <th className="p-3">ลำดับ</th>
               <th className="p-3">กระบวนการ</th>
-              <th className="p-3">เป้าหมาย (นาที) <FaClock className="inline" /></th>
+              <th className="p-3">เป้าหมาย (นาที)</th>
+              <th className="p-3">รหัสพนักงาน</th>
+              <th className="p-3">เริ่ม</th>
+              <th className="p-3">หยุด</th>
+              <th className="p-3">รหัสพนักงาน</th>
               <th className="p-3">เริ่ม</th>
               <th className="p-3">หยุด</th>
               <th className="p-3">รวมเวลา</th>
-              <th className="p-3">รหัสพนักงาน <FaUser className="inline" /></th>
               <th className="p-3">หมายเหตุ</th>
             </tr>
           </thead>
           <tbody>
             {processList.map((process, index) => (
-              <tr key={index} className="border-b hover:bg-gray-100">
-                <td className="p-3">{process.id}</td>
-                <td className="p-3">
-                  <select className="border p-2 rounded w-full" value={process.process} onChange={(e) => handleProcessChange(index, e.target.value)}>
+              <tr key={index} className="border-b text-center hover:bg-gray-50">
+                <td className="p-2">{process.id}</td>
+                <td className="p-2">
+                  <select
+                    value={process.process}
+                    onChange={(e) => handleProcessChange(index, e.target.value)}
+                    className="border rounded px-2 py-1 text-xs w-full bg-white"
+                  >
                     {processOptions.map((option) => (
-                      <option key={option} value={option}>{option}</option>
+                      <option key={option}>{option}</option>
                     ))}
                   </select>
                 </td>
-                <td className="p-3">
-                  <input type="time" className="border p-2 rounded w-full" step="60" value={process.target_time} onChange={(e) => handleInputChange(index, "target_time", e.target.value)} />
+                <td className="p-2">
+                  <input
+                    type="text"
+                    value={process.target_time}
+                    onChange={(e) => handleInputChange(index, "target_time", e.target.value)}
+                    className="border rounded px-2 py-1 text-xs text-center w-full"
+                  />
                 </td>
-                <td className="p-3">
-                  <input type="time" className="border p-2 rounded w-full" step="60" value={process.start_time} onChange={(e) => handleInputChange(index, "start_time", e.target.value)} />
+                <td className="p-2">
+                  <input
+                    type="text"
+                    value={process.worker_id}
+                    onChange={(e) => handleInputChange(index, "worker_id", e.target.value)}
+                    className="border rounded px-2 py-1 text-xs text-center w-full"
+                  />
                 </td>
-                <td className="p-3">
-                  <input type="time" className="border p-2 rounded w-full" step="60" value={process.stop_time} onChange={(e) => handleInputChange(index, "stop_time", e.target.value)} />
+                <td className="p-2">
+                  <input
+                    type="time"
+                    value={process.start_time}
+                    onChange={(e) => handleInputChange(index, "start_time", e.target.value)}
+                    className="border rounded px-2 py-1 text-xs w-full"
+                  />
                 </td>
-                <td className="p-3 text-center font-bold">{process.elapsed_time}</td>
-                <td className="p-3">
-                  <input type="text" className="border p-2 rounded w-full text-center" value={process.worker_id} onChange={(e) => handleInputChange(index, "worker_id", e.target.value)} />
+                <td className="p-2">
+                  <input
+                    type="time"
+                    value={process.stop_time}
+                    onChange={(e) => handleInputChange(index, "stop_time", e.target.value)}
+                    className="border rounded px-2 py-1 text-xs w-full"
+                  />
                 </td>
-                <td className="p-3">
-                  <input type="text" className="border p-2 rounded w-full text-center" value={process.remark} onChange={(e) => handleInputChange(index, "remark", e.target.value)} />
+                <td className="p-2">
+                  <input type="text" className="border rounded px-2 py-1 text-xs text-center w-full" disabled value="" />
+                </td>
+                <td className="p-2">
+                  <input type="time" className="border rounded px-2 py-1 text-xs w-full" disabled />
+                </td>
+                <td className="p-2">
+                  <input type="time" className="border rounded px-2 py-1 text-xs w-full" disabled />
+                </td>
+                <td className="p-2 font-semibold text-xs text-green-700">{process.elapsed_time}</td>
+                <td className="p-2">
+                  <input
+                    type="text"
+                    value={process.remark}
+                    onChange={(e) => handleInputChange(index, "remark", e.target.value)}
+                    className="border rounded px-2 py-1 text-xs text-center w-full"
+                  />
                 </td>
               </tr>
             ))}
@@ -139,10 +217,13 @@ const ProcessDetails = () => {
         </table>
       </div>
 
-      {/* ✅ ปุ่มบันทึก */}
+      {/* 💾 Save Button */}
       <div className="flex justify-end mt-6">
-        <button className="bg-green-600 text-white px-6 py-3 rounded-md flex items-center space-x-2 hover:bg-green-700" onClick={handleSave}>
-          <FaSave className="mr-2" />
+        <button
+          className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-md flex items-center space-x-2 shadow"
+          onClick={handleSave}
+        >
+          <FaSave />
           <span>บันทึกข้อมูล</span>
         </button>
       </div>
